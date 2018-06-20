@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.ProductDao">	
+	
+    <resultMap type="product" id="productMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="category1" column="CATEGORY1" />
+		<result property="category2" column="CATEGORY2" />
+		<result property="category3" column="CATEGORY3" />
+		<result property="prodNum" column="PROD_NUM" />
+		<result property="prodName" column="PROD_NAME" />
+		<result property="prodSize" column="PROD_SIZE" />
+		<result property="prodSpec1" column="PROD_SPEC1" />
+		<result property="prodSpec2" column="PROD_SPEC2" />
+		<result property="prodSpec3" column="PROD_SPEC3" />
+		<result property="prodSpec4" column="PROD_SPEC4" />
+		<result property="prodChoicSpec" column="PROD_CHOIC_SPEC" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+	</resultMap>
+    
+    <resultMap type="commonFile" id="commonFileMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+    
+    <sql id="selectWhere">
+    	
+    	<if test="category1 != null and category1 != ''">
+	    	AND A.CATEGORY1 = #{category1}
+	    </if>
+	    <if test="category2 != null and category2 != ''">
+	    	AND A.CATEGORY2 = #{category2}
+	    </if>
+	    <if test="category3 != null and category3 != ''">
+	    	AND A.CATEGORY3 = #{category3}
+	    </if>
+	    <if test="prodChoicSpec != null and prodChoicSpec != ''">
+	    	AND A.PROD_CHOIC_SPEC = #{prodChoicSpec}
+	    </if>
+    	<if test="searchKeyword != null and searchKeyword != ''">
+		    AND CONCAT(
+		    			LOWER(IFNULL(A.PROD_NAME,'')),' '
+		    			,LOWER(IFNULL(A.PROD_SIZE,'')),' '
+		    			,LOWER(IFNULL(A.PROD_SPEC1,'')),' '
+		    			,LOWER(IFNULL(A.PROD_SPEC2,'')),' '
+		    			,LOWER(IFNULL(A.PROD_SPEC3,'')),' '
+		    			,LOWER(IFNULL(A.PROD_SPEC4,'')),' '
+		    			,LOWER(IFNULL(A.PROD_CHOIC_SPEC,'')),' '
+		    		) REGEXP CONCAT(SUBSTRING(LOWER(#{searchKeyword}),1,1), REPLACE(SUBSTRING(LOWER(#{searchKeyword}),2),'#','|#'))
+
+        </if>
+    </sql>
+    
+	<!-- 상품정보 조회 -->
+	<select id="select" parameterType="map" resultMap="productMap">
+	
+	    SELECT A.*, <include refid="commonFileColumn"/> FROM PRODUCT A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='PRODUCT' AND F.FILE_TYPE='PRODUCT_IMG'
+	    WHERE A.DEL_YN = 'N'
+	    AND A.IDX = #{idx}
+		
+	</select>
+	
+	<!-- 상품정보 리스트 조회 -->
+	<select id="selectList" parameterType="map" resultMap="productMap">
+	
+	    SELECT A.*, <include refid="commonFileColumn"/> FROM PRODUCT A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='PRODUCT' AND F.FILE_TYPE='PRODUCT_IMG'
+	    WHERE A.DEL_YN = 'N'
+	    <include refid="selectWhere"/>
+		
+		ORDER BY A.PROD_NUM ASC
+		
+	</select>
+
+	<!-- 상품정보 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM PRODUCT A
+		WHERE A.DEL_YN = 'N'
+		<include refid="selectWhere"/>
+			
+	</select>
+
+	<!-- 상품등록 조회 -->
+	<insert id="insert" parameterType="product">
+		INSERT 
+		  INTO PRODUCT 
+		       (
+		         CATEGORY1
+				,CATEGORY2
+				,CATEGORY3
+				,PROD_NUM
+				,PROD_NAME
+				,PROD_SIZE
+				,PROD_SPEC1
+				,PROD_SPEC2
+				,PROD_SPEC3
+				,PROD_SPEC4
+				,PROD_CHOIC_SPEC
+				,REG_ADMIN_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{category1}
+		         ,#{category2}
+		         ,#{category3}
+		         ,#{prodNum}
+		         ,#{prodName}
+		         ,#{prodSize}
+		         ,#{prodSpec1}
+		         ,#{prodSpec2}
+		         ,#{prodSpec3}
+		         ,#{prodSpec4}
+		         ,#{prodChoicSpec}
+		         ,#{regAdminIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+	
+	<!-- 상품정보 수정 -->
+	<update id="update" parameterType="product">
+	
+		UPDATE PRODUCT SET 
+		
+			 CATEGORY1=#{category1}
+			,CATEGORY2=#{category2}
+			,CATEGORY3=#{category3}
+			,PROD_NUM=#{prodNum}
+			,PROD_NAME=#{prodName}
+			,PROD_SIZE=#{prodSize}
+			,PROD_SPEC1=#{prodSpec1}
+			,PROD_SPEC2=#{prodSpec2}
+			,PROD_SPEC3=#{prodSpec3}
+			,PROD_SPEC4=#{prodSpec4}
+			,PROD_CHOIC_SPEC=#{prodChoicSpec}
+			,MODI_ADMIN_IDX=#{modiAdminIdx}
+			,MODI_DATE=NOW()
+		       
+		 WHERE IDX=${idx}
+		 AND DEL_YN='N'
+	
+	</update>
+	
+	<!-- 상품정보 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE PRODUCT SET 
+		
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+		 
+		WHERE IDX = ${idx}
+	
+	</update>
+	
+</mapper>

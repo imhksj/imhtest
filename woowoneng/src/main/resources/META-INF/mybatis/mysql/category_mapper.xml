@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.CategoryDao">	
+	
+    <resultMap type="category" id="categoryMap">
+		<id property="idx" column="IDX" />
+	  	<result property="cName" column="C_NAME" />
+		<result property="cType" column="C_TYPE" />
+		<result property="topIdx" column="TOP_IDX" />
+		<result property="pidx" column="PIDX" />
+		<result property="depthNum" column="DEPTH_NUM" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+	</resultMap>
+    
+    <!-- 카테고리 저장 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="idx" >
+    	INSERT 
+		  INTO CATEGORY
+		       (
+		         C_NAME
+		         ,C_TYPE
+		         ,PIDX
+		         <if test="topIdx > 0">
+		         	,TOP_IDX
+		         </if>
+		         ,DEPTH_NUM
+		       ) 
+		       VALUES 
+		       (
+		         #{cName}
+		         ,#{cType}
+		         ,#{pidx}
+		         <if test="topIdx > 0">
+		         	,#{topIdx}
+		         </if>
+		         ,#{depthNum}
+		       )
+
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+			SELECT LAST_INSERT_ID()
+	    </selectKey>
+    </insert>    
+    
+    <!-- 업데이트 -->
+    <update id="update" parameterType="map">
+    	UPDATE CATEGORY SET C_NAME = #{cName}
+    	WHERE IDX = ${idx}
+    </update>
+    
+    <!-- topIdx 업데이트 -->
+    <update id="updateTopIdx" parameterType="map">
+    	UPDATE CATEGORY A SET A.TOP_IDX = A.IDX
+    	WHERE A.IDX = ${idx}
+    </update>
+    
+    
+	<!-- 카테고리정보 조회 -->
+	<select id="select" parameterType="map" resultMap="categoryMap">
+	
+	    SELECT * FROM CATEGORY
+		WHERE 1 = 1
+		
+		<if test="cType != null and cType != ''">
+			AND C_TYPE = #{cType}
+		</if>
+		<if test="idx != null and idx > 0">
+			AND IDX = #{idx}
+		</if>
+		<if test="topIdx != null and topIdx > 0">
+			AND TOP_IDX = #{topIdx}
+		</if>  
+		
+	</select>
+	
+	<!-- 카테고리 뎁스 정보 조회 -->
+	<select id="getCategoryDepth" parameterType="map" resultMap="categoryMap">
+	
+	    SELECT * FROM CATEGORY
+		WHERE 1 = 1
+		
+		<if test="cType != null and cType != ''">
+			AND C_TYPE = #{cType}
+		</if>
+		<if test="depthNum != null and depthNum > 0">
+			AND DEPTH_NUM = #{depthNum}
+		</if> 
+		
+		<if test="pidx != null and pidx > 0">
+			AND PIDX = #{pidx}
+		</if>
+		
+	</select>
+	
+	<!-- 카테고리 뎁스 정보 조회 -->
+	<select id="getCategoryLocation" parameterType="map" resultType="String">
+	
+	    SELECT GROUP_CONCAT(C_NAME ORDER BY IDX SEPARATOR '/') FROM CATEGORY
+		WHERE IDX IN (#{category1},#{category2},#{category3})
+		
+	</select>
+	
+</mapper>

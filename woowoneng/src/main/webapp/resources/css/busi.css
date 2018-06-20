@@ -1,0 +1,23 @@
+
+@charset "utf-8"; 
+
+/* 사업부문 소개 */
+.busi_wrap	{margin-top:-10px}
+.busi_wrap p	{margin-top:15px; line-height:20px; letter-spacing:-0.5px}
+.busi_wrap p:first-child	{margin-top:0}
+.busi_wrap .img_wrap	{position:relative; margin-top:20px; line-height:0}
+.busi_wrap .img_wrap a	{display:block; position:absolute; top:50%; left:50%; margin:-22px 0 0 -130px; width:260px; height:44px; background:rgba(0, 0, 0, 0.7); color:#fdb813; font-size:15px; font-weight:bold; line-height:44px; text-align:center}
+
+
+
+
+@media screen and (max-width:818px){
+	/* 사업부문 소개 */
+	.busi_wrap	{margin-top:-10px}
+	.busi_wrap p	{margin-top:15px; line-height:20px; letter-spacing:-0.5px}
+	.busi_wrap p:first-child	{margin-top:0}
+	.busi_wrap .img_wrap	{position:relative; margin-top:20px}
+	.busi_wrap .img_wrap img	{width:100%}
+	.busi_wrap .img_wrap a	{display:block; position:absolute; top:50%; left:50%; margin:-22px 0 0 -130px; width:260px; height:44px; background:rgba(0, 0, 0, 0.7); color:#fdb813; font-size:15px; font-weight:bold; line-height:44px; text-align:center}
+
+}

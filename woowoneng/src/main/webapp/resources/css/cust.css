@@ -1,0 +1,86 @@
+
+@charset "utf-8"; 
+
+/* Lnb info */
+.lnb .info	{margin-top:40px; border:0 !important;}
+.lnb .info li	{border:0 !important; font-size:11px; line-height:20px}
+.lnb .info li .bul	{margin-right:8px; width:5px; height:5px;}
+
+/* Table list */
+.table_top	{position:relative; height:30px; margin-bottom:-10px;}
+.table_top .select	{float:right; height:28px}
+.table_top .select label	{line-height:28px}
+.table_top .select select	{height:28px; line-height:28px}
+.table_top .btn_base		{position:absolute; top:0; right:0; border:1px solid #000; color:#000; line-height:28px}
+
+.table_top .info	{display:none}
+
+.table_wrap.list	{border:0}
+.table_wrap.list table thead tr th		{background:#32343d; color:#fff; font-weight:bold; text-align:center}
+.table_wrap.list table tbody tr td	{padding:10px 0; text-align:center}
+.table_wrap.list table tbody tr td.al_left	{padding:10px 5px;}
+.table_wrap.list table tbody tr td a:hover	{text-decoration:underline}
+
+.table_wrap.list .w100	{display:table-column;}
+.table_wrap.list .mo	{display:table-cell !important;}
+
+.table_wrap.detail table tbody tr th	{padding:14px 0 0 5px; vertical-align:top}
+.table_wrap.detail table tbody tr td .box_info	{overflow-y:auto; padding:9px; width:100%; max-width:337px; height:52px; border:1px solid #e7e7e8; font-size:11px; line-height:17px; letter-spacing:-1px}
+.table_wrap.detail table tbody tr td .chk	{display:block; margin-top:10px; font-size:11px; line-height:16px}
+.table_wrap.detail table tbody tr td .chk input	{margin:0 5px 0 0; padding:0; width:auto !important; height:auto; vertical-align:middle}
+.table_wrap.detail table tbody tr td .chk label	{line-height:16px}
+
+/* 테이블 상세 */
+.table_wrap table tbody tr td .detail_wrap	{margin:10px -10px 20px -10px}
+.table_wrap table tbody tr td .detail_wrap .img	{display:block; margin-top:10px; line-height:0}
+.table_wrap table tbody tr td .detail_wrap .img img	{max-width:100%}
+.table_wrap table tbody tr td .detail_wrap p	{margin-top:15px;}
+
+
+/* FAQ */
+.faq_list	{border-top:1px solid #bcbdc0}
+.faq_list li	{border-bottom:1px solid #bcbdc0}
+.faq_list li a	{display:block; position:relative; padding-left:150px; background:#fff; color:#32343d; font-size:13px; line-height:48px}
+.faq_list li a span	{display:block; position:absolute; top:0; left:0; width:150px; font-size:14px; font-weight:bold; line-height:48px; text-align:center}
+.faq_list li .answ	{display:none; position:relative; padding:8px 5px 8px 150px; border-top:1px solid #bcbdc0; background:#f3f3f4}
+.faq_list li .answ p	{line-height:18px}
+.faq_list li .answ p span	{display:block; position:absolute; top:50%; left:0; margin:-9px 0 0 0; width:150px; font-size:13px; font-weight:bold; line-height:18px; text-align:center}
+.faq_list li.on a	{background:#fdb813;}
+
+
+
+
+@media screen and (max-width:818px){
+	/* Table list */
+	.table_wrap.list	{}
+	.table_wrap.list .w25	{width:25px !important}
+	.table_wrap.list .w35	{width:35px !important}
+	.table_wrap.list .w40	{width:40px !important}
+	.table_wrap.list .w50	{width:50px !important}
+	.table_wrap.list .w60	{width:60px !important}
+	.table_wrap.list .w65	{width:65px !important}
+	.table_wrap.list .w80	{width:80px !important}
+	.table_wrap.list .w90	{width:90px !important}
+	.table_wrap.list .w100	{width:100px !important}
+	.table_wrap.list .mo	{display:none !important;}
+
+	.table_top .info	{display:block; height:30px}
+	.table_top .info li	{float:left; width:80px; line-height:30px}
+	.table_top .info li .bul	{margin-right:5px}
+
+	/* 테이블 상세 */
+	.table_wrap table tbody tr td .detail_wrap .img img	{width:100%}
+
+	.table_wrap.detail table tbody tr td .box_info	{height:67px; box-sizing:border-box; -moz-box-sizing:border-box;}
+
+	/* FAQ */
+	.faq_list	{border-top:1px solid #bcbdc0}
+	.faq_list li	{border-bottom:1px solid #bcbdc0}
+	.faq_list li a	{display:block; position:relative; padding:10px 5px 10px 120px; background:#fff; color:#32343d; font-size:13px; line-height:20px}
+	.faq_list li a span	{display:block; position:absolute; top:0; left:0; width:120px; font-size:14px; font-weight:bold; line-height:40px; text-align:center}
+	.faq_list li .answ	{padding:8px 5px 8px 120px; border-top:0;}
+	.faq_list li .answ p	{line-height:18px}
+	.faq_list li .answ p span	{display:block; position:absolute; top:50%; left:0; margin:-9px 0 0 0; width:120px; font-size:13px; line-height:18px; text-align:center}
+	.faq_list li.on a	{background:#32343d; color:#fdb813}
+
+}

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.ProductCaseDao">	
+	
+    <resultMap type="productCase" id="productCaseMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="vendor" column="VENDOR" />
+		<result property="deliverDate" column="DELIVER_DATE" />
+		<result property="content" column="CONTENT" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+		<result property="hit" column="HIT" />
+	</resultMap>
+
+	<resultMap type="commonFile" id="commonFileMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+ 
+	<!-- 납품사례 등록 -->
+	<insert id="insert" parameterType="productCase">
+		INSERT 
+		  INTO PRODUCT_CASE 
+		       (
+				 VENDOR
+				,DELIVER_DATE
+				,CONTENT
+				,REG_ADMIN_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{vendor}
+		         ,#{deliverDate}
+		         ,#{content}
+		         ,#{regAdminIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 납품사례 수정 -->
+	<update id="update" parameterType="productCase">
+	
+		UPDATE PRODUCT_CASE SET 
+		
+			   VENDOR = #{vendor}
+		       ,DELIVER_DATE = #{deliverDate}
+		       ,CONTENT = #{content}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+		       
+		 WHERE IDX = #{idx}
+	
+	</update>
+	
+	<!-- 납품사례 조회 -->
+	<select id="select" parameterType="map" resultMap="productCaseMap">
+	
+		SELECT * FROM PRODUCT_CASE
+		
+		WHERE IDX = #{idx}
+		AND DEL_YN='N'
+	
+	</select>
+	
+	<!-- 납품사례 리스트 -->
+	<select id="selectList" parameterType="map" resultMap="productCaseMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/> FROM PRODUCT_CASE A
+			LEFT JOIN COMMON_FILE F
+		    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='PR/CASE' AND F.FILE_TYPE='LIST_IMG'
+		WHERE A.DEL_YN='N'
+		ORDER BY A.IDX DESC
+	
+	</select>
+	
+	<!-- 납품사례 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM PRODUCT_CASE 
+		WHERE DEL_YN = 'N'
+			
+	</select>
+	
+	<!-- 언론보도 이전글 -->
+	<select id="selectPrev" parameterType="map" resultMap="productCaseMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM PRODUCT_CASE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM PRODUCT_CASE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum,
+		                            (SELECT @RN:=0) AS R) D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) > t2.ROWNUM 
+		       AND DEL_YN = 'N' 
+		ORDER BY t2.ROWNUM DESC LIMIT 1
+	</select>
+	
+	<!-- 언론보도 다음글 -->
+	<select id="selectNext" parameterType="map" resultMap="productCaseMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM PRODUCT_CASE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE t2.ROWNUM > 
+		       (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM PRODUCT_CASE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		                            (SELECT @RN:=0) AS R 
+		                     )D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) 
+		       AND DEL_YN = 'N' limit 1
+	</select>
+	
+	<update id="updateHit">
+		UPDATE PRODUCT_CASE SET HIT = (HIT+1)
+		WHERE IDX = ${idx}
+	</update>
+	
+	<!-- 상품정보 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE PRODUCT_CASE SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+		
+</mapper>

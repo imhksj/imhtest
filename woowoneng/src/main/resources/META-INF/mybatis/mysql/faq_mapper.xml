@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.FaqDao">	
+	
+    <resultMap type="faq" id="faqMap">
+		<id property="idx" column="IDX" />
+	  	<result property="name" column="NAME" />
+		<result property="question" column="QUESTION" />
+		<result property="answer" column="ANSWER" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+		<result property="hit" column="HIT" />
+	</resultMap>
+
+	<!-- 자주묻는 질문 등록 -->
+	<insert id="insert" parameterType="faq">
+		INSERT 
+		  INTO FAQ 
+		       (
+				 NAME
+				,QUESTION
+				,ANSWER
+		       ) 
+		       VALUES 
+		       (
+		         #{name}
+		         ,#{question}
+		         ,#{answer}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 자주묻는 질문 수정 -->
+	<update id="update" parameterType="faq">
+	
+		UPDATE FAQ SET 
+		
+		        NAME = #{name}
+		       ,QUESTION = #{question}
+		       ,ANSWER = #{answer}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+		       
+		 WHERE IDX = #{idx}
+	
+	</update>
+
+	<!-- 자주묻는 질문 조회 -->
+	<select id="select" parameterType="map" resultMap="faqMap">
+	
+		SELECT * FROM FAQ 
+
+	    WHERE DEL_YN = 'N'
+	    AND IDX = #{idx}
+	
+	</select>
+	
+	<!-- 자주묻는 질문 리스트 조회 -->
+	<select id="selectList" parameterType="map" resultMap="faqMap">
+	
+		SELECT * FROM FAQ
+	    
+	    WHERE DEL_YN = 'N'
+		
+		ORDER BY IDX ASC
+			
+	</select>
+	
+	<!-- 자주묻는 질문 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM FAQ
+		
+		WHERE DEL_YN = 'N'
+					
+	</select>
+	
+	<update id="updateHit">
+		UPDATE FAQ SET HIT = (HIT+1)
+		WHERE IDX = ${idx}
+	</update>
+	
+	<!-- 자주묻는 질문 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE FAQ SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+		
+</mapper>

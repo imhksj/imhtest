@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.CertifyDao">	
+	
+    <resultMap type="certify" id="certifyMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="certifyName" column="CERTIFY_NAME" />
+		<result property="certifyNum" column="CERTIFY_NUM" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+	</resultMap>
+
+	<resultMap type="commonFile" id="commonFileMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+ 
+	<!-- 인증현황 등록 -->
+	<insert id="insert" parameterType="certify">
+		INSERT 
+		  INTO CERTIFY 
+		       (
+				 CERTIFY_NAME
+				,CERTIFY_NUM
+				,REG_ADMIN_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{certifyName}
+		         ,#{certifyNum}
+		         ,#{regAdminIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 인증현황 수정 -->
+	<update id="update" parameterType="certify">
+	
+		UPDATE CERTIFY SET 
+		
+			   CERTIFY_NAME = #{certifyName}
+		       ,CERTIFY_NUM = #{certifyNum}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+		       
+		 WHERE IDX = #{idx}
+	
+	</update>
+
+	<!-- 인증현황 조회 -->
+	<select id="select" parameterType="map" resultMap="certifyMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/> FROM CERTIFY A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='COMPANY/CERTIFY' AND F.FILE_TYPE='LIST_IMG'
+	    WHERE A.DEL_YN = 'N'
+	    AND A.IDX = #{idx}
+	
+	</select>
+	
+	<!-- 인증현황 리스트 조회 -->
+	<select id="selectList" parameterType="map" resultMap="certifyMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/> FROM CERTIFY A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='COMPANY/CERTIFY' AND F.FILE_TYPE='LIST_IMG'
+	    
+	    WHERE A.DEL_YN = 'N'
+		ORDER BY A.IDX DESC
+			
+	</select>
+	
+	<!-- 인증현황 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM CERTIFY
+		WHERE DEL_YN = 'N'
+
+	</select>
+	
+	<!-- 인증현황 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE CERTIFY SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+		
+</mapper>

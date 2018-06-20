@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.MemberDao">	
+	
+    <resultMap type="member" id="memberMap">
+		<id property="idx" column="IDX" />
+	  	<result property="memberId" column="MEMBER_ID" />
+		<result property="memberPwd" column="MEMBER_PWD" />
+		<result property="companyName" column="MEMBER_NAME" />
+		<result property="region" column="REGION" />
+		<result property="businessLicNum" column="BUSINESS_LIC_NUM" />
+		<result property="email" column="EMAIL" />
+		<result property="tel" column="TEL" />
+		<result property="fax" column="FAX" />
+		<result property="companyAddr" column="COMPANY_ADDR" />
+		<result property="tptb1" column="TPTB1" />
+		<result property="tptb1Phone" column="TPTB1_PHONE" />
+		<result property="tptb2" column="TPTB2" />
+		<result property="tptb2Phone" column="TPTB2_PHONE" />
+		<result property="note" column="NOTE" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+	</resultMap>
+    
+	<!-- 회원정보 조회 -->
+	<select id="select" parameterType="map" resultMap="memberMap">
+	
+	    SELECT * FROM MEMBER
+		WHERE DEL_YN = 'N'
+		AND IDX = #{idx}
+		
+	</select>
+	
+	<!-- 회원정보 조회 -->
+	<select id="selectMember" parameterType="map" resultMap="memberMap">
+	
+	    SELECT * FROM MEMBER
+		WHERE DEL_YN = 'N'
+		AND MEMBER_ID = #{memberId}
+		AND MEMBER_PWD = #{memberPwd}
+		
+	</select>
+	
+	<!-- 회원정보 리스트 조회 -->
+	<select id="selectList" parameterType="map" resultMap="memberMap">
+	
+	    SELECT * FROM MEMBER WHERE DEL_YN = 'N'
+	    
+	    ORDER BY IDX DESC
+		
+	</select>
+
+	<!-- 회원정보 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM MEMBER WHERE DEL_YN = 'N'
+			
+	</select>
+
+	<!-- 회원정보 등록 -->
+	<insert id="insert" parameterType="member">
+		INSERT 
+		  INTO MEMBER 
+		       (
+		         MEMBER_ID
+		         ,MEMBER_PWD
+		         ,COMPANY_NAME
+		         ,REGION
+		         ,BUSINESS_LIC_NUM
+		         ,EMAIL
+		         ,TEL
+		         ,FAX
+		         ,COMPANY_ADDR
+		         ,TPTB1
+		         ,TPTB1_PHONE
+		         ,TPTB2
+		         ,TPTB2_PHONE
+		         ,NOTE
+		       ) 
+		       VALUES 
+		       (
+		         #{memberId}
+		         ,#{memberPwd}
+		         ,#{companyName}
+		         ,#{region}
+		         ,#{businessLicNum}
+		         ,#{email}
+		         ,#{tel}
+		         ,#{fax}
+		         ,#{companyAddr}
+		         ,#{tptb1}
+		         ,#{tptb1Phone}
+		         ,#{tptb2}
+		         ,#{tptb2Phone}
+		         ,#{note}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+	
+	<!-- 회원정보 수정 -->
+	<update id="update" parameterType="member">
+	
+		UPDATE MEMBER SET 
+		
+			   MEMBER_ID = #{memberId}
+		       ,MEMBER_PWD = #{memberPwd}
+		       ,COMPANY_NAME = #{companyName}
+		       ,REGION = #{region}
+		       ,BUSINESS_LIC_NUM = #{businessLicNum}
+		       ,EMAIL = #{email}
+		       ,TEL = #{tel}
+		       ,FAX = #{fax}
+		       ,COMPANY_ADDR = #{companyAddr}
+		       ,TPTB1 = #{tptb1}
+		       ,TPTB1_PHONE = #{tptb1Phone}
+		       ,TPTB2 = #{tptb2}
+		       ,TPTB2_PHONE = #{tptb2Phone}
+		       ,NOTE = #{note}  
+		       
+		 WHERE IDX=#{idx}
+	
+	</update>
+	
+	<!-- 회원정보 삭제 -->
+	<update id="delete" parameterType="int">
+	
+		UPDATE MEMBER SET DEL_YN='Y' 
+		WHERE IDX=#{idx}
+	
+	</update>
+</mapper>

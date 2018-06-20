@@ -1,0 +1,39 @@
+
+@charset "utf-8"; 
+
+#wrap	{border:0}
+#wrap #container	{margin:0}
+#wrap #container .content	{padding-left:0; width:100%}
+
+/* Login */
+.login_top	{margin:0 -20px; padding:15px 20px; color:#fff; background:#6d6e71; line-height:18px; text-align:center}
+.login_top br	{display:none}
+
+.login	{margin:0 auto; padding-top:15px; max-width:320px; width:100%;}
+.login .logo	{margin:0 auto; width:235px; text-align:center; line-height:0}
+.login .logo img	{width:100%}
+.login dl	{overflow:hidden; margin-top:33px}
+.login dl:after	{content:""; display:block; clear:both}
+.login dl dt	{float:left; margin-top:15px; width:20%; font-size:14px; font-weight:bold; line-height:40px; letter-spacing:-1px}
+.login dl dd	{float:left; margin-top:15px; width:80%; font-size:14px; font-weight:bold; line-height:40px}
+.login dl dd input	{height:38px; box-sizing:border-box; -moz-box-sizing:border-box;}
+
+.login .btn_wrap	{margin-top:30px; margin-left:20%;}
+.login .btn_wrap button	{display:inline-block; width:100%; height:45px; background:#32343d; color:#fdb813; font-size:16px; font-weight:bold; line-height:45px}
+.login .btn_wrap button:disabled	{background:#e7e7e8; color:#fff}
+.login .btn_wrap .btn_cancel	{float:right; background:#fff; color:#ff2222}
+
+.login p	{margin:0 auto; max-width:260px;}
+.login .t_info	{margin-top:35px; line-height:18px; text-align:center}
+.login .tel		{margin-top:15px; }
+.login .tel span	{display:block; margin:0 auto; width:100%; border:1px solid #3e3c3b; color:#32343d; font-size:15px; font-weight:bold; line-height:26px; text-align:center; box-sizing:border-box; -moz-box-sizing:border-box; border-radius:5px}
+
+
+
+
+@media screen and (max-width:818px){
+	#wrap #container .content	{padding: 0 20px; width:100%}
+
+	.login_top	{text-align:left}
+	.login_top br	{display:block}
+}

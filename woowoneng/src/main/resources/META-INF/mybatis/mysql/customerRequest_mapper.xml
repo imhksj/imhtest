@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.CustomerRequestDao">	
+	
+    <resultMap type="customerRequest" id="customerRequestMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="name" column="NAME" />
+		<result property="companyName" column="COMPANY_NAME" />
+		<result property="tel" column="TEL" />
+		<result property="email" column="EMAIL" />
+		<result property="addr" column="ADDR" />
+		<result property="buyYear" column="BUY_YEAR" />
+		<result property="buyMonth" column="BUY_MONTH" />
+		<result property="productName" column="PRODUCT_NAME" />
+		<result property="catalog" column="CATALOG" />
+		<result property="content" column="CONTENT" />
+		<result property="privacyYn" column="PRIVACY_YN" />
+		<result property="requestType" column="REQUEST_TYPE" />
+		<result property="procType" column="PROC_TYPE" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="memberIdx" column="MEMBER_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+	</resultMap>
+
+ 	<resultMap type="commonFile" id="commonFileMap" extends="categoryMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <resultMap type="category" id="categoryMap">
+		<id property="catalogCategory.idx" column="C_IDX" />
+	  	<result property="catalogCategory.cName" column="C_C_NAME" />
+		<result property="catalogCategory.cType" column="C_C_TYPE" />
+		<result property="catalogCategory.topIdx" column="C_TOP_IDX" />
+		<result property="catalogCategory.pidx" column="C_PIDX" />
+		<result property="catalogCategory.depthNum" column="C_DEPTH_NUM" />
+		<result property="catalogCategory.delYn" column="C_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+ 
+ 	<sql id="categoryColumn">
+		C.IDX AS C_IDX
+    	,C.C_NAME AS C_C_NAME
+    	,C.C_TYPE AS C_C_TYPE
+    	,C.TOP_IDX AS C_TOP_IDX
+    	,C.PIDX AS C_PIDX
+    	,C.DEPTH_NUM AS C_DEPTH_NUM
+    	,C.DEL_YN AS C_DEL_YN
+    </sql>
+ 
+	<!-- 고객관리 등록 -->
+	<insert id="insert" parameterType="customerRequest">
+		INSERT 
+		  INTO CUSTOMER_REQUEST 
+		       (
+				 NAME
+				,COMPANY_NAME
+				,TEL
+				,EMAIL
+				,ADDR
+				,BUY_YEAR
+				,BUY_MONTH
+				,PRODUCT_NAME
+				,CATALOG
+				,CONTENT"C:/Users/limmyungho/Desktop/testssssss.html"
+				,PRIVACY_YN
+				,REQUEST_TYPE
+				,MEMBER_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{name}
+		         ,#{companyName}
+		         ,#{tel}
+		         ,#{email}
+		         ,#{addr}
+		         ,#{buyYear}
+		         ,#{buyMonth}
+		         ,#{productName}
+		         ,#{catalog}
+		         ,#{content}
+		         ,#{privacyYn}
+		         ,#{requestType}
+		         ,#{memberIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 고객관리 조회 -->
+	<select id="select" parameterType="map" resultMap="customerRequestMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/>, <include refid="categoryColumn"/> FROM CUSTOMER_REQUEST A
+			LEFT JOIN COMMON_FILE F
+		    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='CUSTOMER/CUSTOMER_REQUEST' AND F.FILE_TYPE='FILE'
+		    LEFT JOIN CATEGORY C
+		    	ON A.CATALOG = C.IDX
+		WHERE A.IDX = #{idx}
+		AND A.DEL_YN='N'
+	
+	</select>
+	
+	<!-- 고객관리 조회 -->
+	<select id="selectList" parameterType="map" resultMap="customerRequestMap">
+	
+		SELECT * FROM CUSTOMER_REQUEST
+		
+		WHERE DEL_YN='N'
+		<if test="requestType != null and requestType != ''">
+			AND REQUEST_TYPE = #{requestType}
+		</if>
+		<if test="procType != null and procType != ''">
+			AND PROC_TYPE = #{procType}
+		</if>
+		
+		ORDER BY IDX DESC
+		
+	</select>
+	
+	<!-- 회원정보 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM CUSTOMER_REQUEST 
+		WHERE DEL_YN = 'N'
+		<if test="requestType != null and requestType != ''">
+			AND REQUEST_TYPE = #{requestType}
+		</if>
+		<if test="procType != null and procType != ''">
+			AND PROC_TYPE = #{procType}
+		</if>
+			
+	</select>
+	
+	<!-- 상품정보 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE CUSTOMER_REQUEST SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+	
+	<!-- 주문정보 프로세스 수정 -->
+	<update id="updateProcType" parameterType="map">
+		
+		UPDATE CUSTOMER_REQUEST SET 
+			
+			PROC_TYPE = #{procType}
+			,MODI_DATE = NOW()
+		    ,MODI_ADMIN_IDX = #{modiAdminIdx}
+			
+		WHERE IDX=#{idx}
+		
+	</update>
+		
+</mapper>

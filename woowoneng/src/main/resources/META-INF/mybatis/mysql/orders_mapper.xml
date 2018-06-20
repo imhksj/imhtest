@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.OrdersDao">	
+	
+	<resultMap type="orders" id="ordersMap" extends="memberMap">
+		<id property="idx" column="IDX" />
+	  	<result property="amount" column="AMOUNT" />
+		<result property="memberPwd" column="MEMBER_PWD" />
+		<result property="tptb" column="TPTB" />
+		<result property="deliverAddr" column="DELIVER_ADDR" />
+		<result property="comment" column="COMMENT" />
+		<result property="productIdx" column="PRODUCT_IDX" />
+		<result property="memberIdx" column="MEMBER_IDX" />
+		<result property="procType" column="PROC_TYPE" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+	</resultMap>
+	
+	<resultMap type="member" id="memberMap" extends="productMap">
+		<id property="member.idx" column="M_IDX" />
+	  	<result property="member.memberId" column="M_ADMIN_ID" />
+		<result property="member.companyName" column="M_COMPANY_NAME" />
+		<result property="member.region" column="M_REGION" />
+		<result property="member.businessLicNum" column="M_BUSINESS_LIC_NUM" />
+		<result property="member.email" column="M_EMAIL" />
+		<result property="member.tel" column="M_TEL" />
+		<result property="member.fax" column="M_FAX" />
+		<result property="member.companyAddr" column="M_COMPANY_ADDR" />
+		<result property="member.tptb1" column="M_TPTB1" />
+		<result property="member.tptb1Phone" column="M_TPTB1_PHONE" />
+		<result property="member.tptb2" column="M_TPTB2" />
+		<result property="member.tptb2Phone" column="M_TPTB2_PHONE" />
+		<result property="member.note" column="M_NOTE" />
+		<result property="member.delYn" column="M_DEL_YN" />
+	</resultMap>
+	
+    <resultMap type="product" id="productMap">
+		<id property="product.idx" column="P_IDX" />
+	  	<result property="product.category1" column="P_CATEGORY1" />
+		<result property="product.category2" column="P_CATEGORY2" />
+		<result property="product.category3" column="P_CATEGORY3" />
+		<result property="product.prodNum" column="P_PROD_NUM" />
+		<result property="product.prodName" column="P_PROD_NAME" />
+		<result property="product.prodSize" column="P_PROD_SIZE" />
+		<result property="product.prodSpec1" column="P_PROD_SPEC1" />
+		<result property="product.prodSpec2" column="P_PROD_SPEC2" />
+		<result property="product.prodSpec3" column="P_PROD_SPEC3" />
+		<result property="product.prodSpec4" column="P_PROD_SPEC4" />
+		<result property="product.prodChoicSpec" column="P_PROD_CHOIC_SPEC" />
+		<result property="product.delYn" column="P_DEL_YN" />
+		
+		<result property="product.commonFile.idx" column="F_IDX" />
+		<result property="product.commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="product.commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="product.commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="product.commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="product.commonFile.pidx" column="F_PIDX" />
+		<result property="product.commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <sql id="memberColumn">
+		M.IDX AS M_IDX
+		,M.MEMBER_ID AS M_MEMBER_ID
+		,M.COMPANY_NAME AS M_COMPANY_NAME
+		,M.REGION AS M_REGION
+		,M.BUSINESS_LIC_NUM AS M_BUSINESS_LIC_NUM
+		,M.EMAIL AS M_EMAIL
+		,M.TEL AS M_TEL
+		,M.FAX AS M_FAX
+		,M.COMPANY_ADDR AS M_COMPANY_ADDR
+		,M.TPTB1 AS M_TPTB1
+		,M.TPTB1_PHONE AS M_TPTB1_PHONE
+		,M.TPTB2 AS M_TPTB2
+		,M.TPTB2_PHONE AS M_TPTB2_PHONE
+		,M.NOTE AS M_NOTE
+		,M.DEL_YN AS M_DEL_YN
+		,M.REG_DATE AS M_REG_DATE
+    </sql>
+    
+    <sql id="productColumn">
+		P.IDX AS P_IDX
+		,P.CATEGORY1 AS P_CATEGORY1
+		,P.CATEGORY2 AS P_CATEGORY2
+		,P.CATEGORY3 AS P_CATEGORY3
+		,P.PROD_NUM AS P_PROD_NUM
+		,P.PROD_NAME AS P_PROD_NAME
+		,P.PROD_SIZE AS P_PROD_SIZE
+		,P.PROD_SPEC1 AS P_PROD_SPEC1
+		,P.PROD_SPEC2 AS P_PROD_SPEC2
+		,P.PROD_SPEC3 AS P_PROD_SPEC3
+		,P.PROD_SPEC4 AS P_PROD_SPEC4
+		,P.PROD_CHOIC_SPEC AS P_PROD_CHOIC_SPEC
+		,P.DEL_YN AS P_DEL_YN
+		,P.REG_ADMIN_IDX AS P_REG_ADMIN_IDX
+		,P.REG_DATE AS P_REG_DATE
+		,P.MODI_ADMIN_IDX AS P_MODI_ADMIN_IDX
+		,P.MODI_DATE AS P_MODI_DATE
+		,P.DEL_DATE AS P_DEL_DATE
+		,P.DEL_ADMIN_IDX AS P_DEL_ADMIN_IDX
+    </sql>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+    
+    <insert id="insert">
+    	INSERT 
+		  INTO ORDERS 
+		       (
+				 AMOUNT
+				,TPTB
+				,DELIVER_ADDR
+				,COMMENT
+				,PRODUCT_IDX
+				,MEMBER_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{amount}
+		         ,#{tptb}
+		         ,#{deliverAddr}
+		         ,#{comment}
+		         ,#{productIdx}
+		         ,#{memberIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+    </insert>
+    
+	<!-- 주문정보 조회 -->
+	<select id="select" parameterType="map" resultMap="ordersMap">
+	
+	   SELECT 
+	   		O.*
+	   		,<include refid="memberColumn"/>
+	   		,<include refid="productColumn"/>
+	   		,<include refid="commonFileColumn"/>
+		  FROM ORDERS O 
+		     LEFT OUTER JOIN MEMBER M 
+		         ON O.MEMBER_IDX = M.IDX
+		     LEFT OUTER JOIN PRODUCT P 
+		         ON O.PRODUCT_IDX = P.IDX 
+		     LEFT OUTER JOIN COMMON_FILE F 
+		         ON P.IDX = F.PIDX 
+		       AND F.FILE_GROUP = 'PRODUCT' 
+		       AND F.FILE_TYPE = 'PRODUCT_IMG' 
+		       AND F.DEL_YN = 'N'
+		WHERE O.IDX = #{idx}
+		
+	</select>
+	
+	<!-- 주문정보 리스트  조회 -->
+	<select id="selectList" parameterType="map" resultMap="ordersMap">
+	
+	   SELECT 
+	   		O.*
+	   		,<include refid="memberColumn"/>
+	   		,<include refid="productColumn"/>
+	   		,<include refid="commonFileColumn"/>
+		  FROM ORDERS O 
+		     LEFT OUTER JOIN MEMBER M 
+		         ON O.MEMBER_IDX = M.IDX
+		     LEFT OUTER JOIN PRODUCT P 
+		         ON O.PRODUCT_IDX = P.IDX
+		     LEFT OUTER JOIN COMMON_FILE F 
+		         ON P.IDX = F.PIDX 
+		       AND F.FILE_GROUP = 'PRODUCT' 
+		       AND F.FILE_TYPE = 'PRODUCT_IMG' 
+		       AND F.DEL_YN = 'N' 
+		WHERE 1=1
+		<if test="procType != null and procType != ''">
+			AND O.PROC_TYPE = #{procType}
+		</if>
+		
+		ORDER BY O.IDX DESC
+		
+	</select>
+
+	<!-- 주문정보 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM ORDERS WHERE 1=1
+		<if test="procType != null and procType != ''">
+			AND PROC_TYPE = #{procType}
+		</if>
+			
+	</select>
+
+	<!-- 주문정보 수정 -->
+	<update id="update" parameterType="map">
+		
+		UPDATE ORDERS SET 
+		
+			   AMOUNT = #{amount}
+		       ,TPTB = #{tptb}
+		       ,DELIVER_ADDR = #{deliverAddr}
+		       ,COMMENT = #{comment}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+				
+		 WHERE IDX=#{idx}
+		
+	</update>
+
+	<!-- 주문정보 프로세스 수정 -->
+	<update id="updateProcType" parameterType="map">
+		
+		UPDATE ORDERS SET 
+			
+			PROC_TYPE = #{procType}
+			,MODI_DATE = NOW()
+		    ,MODI_ADMIN_IDX = #{modiAdminIdx}
+			
+		WHERE IDX=#{idx}
+		
+	</update>
+		
+</mapper>

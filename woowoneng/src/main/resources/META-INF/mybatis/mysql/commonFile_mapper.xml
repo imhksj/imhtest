@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.CommonFileDao">	
+	
+    <resultMap type="commonFile" id="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="fileOrgName" column="FILE_ORG_NAME" />
+	  	<result property="fileSysName" column="FILE_SYS_NAME" />
+	  	<result property="fileGroup" column="FILE_GROUP" />
+	  	<result property="fileType" column="FILE_TYPE" />
+	  	<result property="pidx" column="PIDX" />
+	  	<result property="delYn" column="DEL_YN" />
+	  	<result property="regDate" column="REG_DATE" />
+	  	<result property="delDate" column="DEL_DATE" />
+	  	<result property="orderNum" column="ORDER_NUM" />
+	</resultMap>
+    
+    <!-- commonFile 리스트 객체를 받아와서 파일저장 -->
+	<insert id="insertArr" parameterType="map">
+	    
+	    INSERT INTO COMMON_FILE 
+		       (
+		           FILE_ORG_NAME
+		           ,FILE_SYS_NAME
+		           ,FILE_GROUP
+		           ,FILE_TYPE
+		           ,PIDX
+		           ,ORDER_NUM
+		       ) 
+		       VALUES 
+				<foreach collection="fileList" item="item" separator=" , ">
+					<if test="item.fileOrgName != null and item.fileOrgName != '' and item.fileSysName != null and item.fileSysName != '' and 0 >= item.idx and item.pidx > 0">
+				      	(
+							#{item.fileOrgName}
+							,#{item.fileSysName}
+							,#{item.fileGroup}
+							,#{item.fileType}
+							,#{item.pidx}
+							,#{item.orderNum}
+						)
+					</if>
+				</foreach>
+
+	</insert>
+	
+	<!-- commonFile 객체로 파일 저장 -->
+	<insert id="insert" parameterType="commonFile">
+	    
+	    INSERT INTO COMMON_FILE 
+		       (
+		           FILE_ORG_NAME
+		           ,FILE_SYS_NAME
+		           ,FILE_GROUP
+		           ,FILE_TYPE
+		           ,PIDX
+		           ,ORDER_NUM
+		       ) 
+		       VALUES 
+		      (
+					#{fileOrgName}
+					,#{fileSysName}
+					,#{fileGroup}
+					,#{fileType}
+					,#{pidx}
+					,#{orderNum}
+				)
+
+	</insert>
+	
+	<!-- commonFile 정렬순서 수정 -->
+	<update id="updateOrderNum" parameterType="commonFile">
+		
+		UPDATE COMMON_FILE SET ORDER_NUM = #{orderNum}
+		
+		WHERE PIDX=#{pidx}
+		
+	</update>
+	
+	<!-- 파일 삭제 -->
+	<update id="fileDel" parameterType="map">
+	    UPDATE COMMON_FILE 
+		       SET DEL_YN='Y'
+		       ,DEL_DATE=NOW() 
+		 WHERE 1=1
+		 <choose>
+		     <when test="idx != null and idx > 0">
+		 		AND IDX=${idx}        
+		     </when>
+		     <otherwise>
+		         AND FILE_GROUP=#{fileGroup}
+			     AND FILE_TYPE=#{fileType}
+			     AND PIDX=#{pidx}
+		     </otherwise>
+		 </choose> 
+		 
+	</update>
+	
+	<!-- 파일 삭제 -->
+	<update id="fileIdxDel" parameterType="map">
+	    UPDATE COMMON_FILE 
+		       SET DEL_YN='Y'
+		       ,DEL_DATE=NOW() 
+		 WHERE 1=1
+		 AND IDX=${idx}
+	</update>
+	
+	<!-- parameterType를 commonFile 객체 형태로 받아서 리스트 조회 -->
+	<select id="getSelect" parameterType="map" resultMap="commonFileMap">
+	    
+	    SELECT * 
+		  FROM COMMON_FILE 
+		 WHERE 1=1 
+	       AND DEL_YN='N'
+	       AND FILE_GROUP=#{fileGroup}
+	       AND PIDX=#{pidx}
+
+		ORDER BY ORDER_NUM ASC, IDX DESC
+	</select>
+	
+	<!-- parameterType를 pramUtil 객체 형태로 받아서 리스트 조회 -->
+	<select id="select" parameterType="map" resultMap="commonFileMap">
+	    
+	    SELECT * 
+		  FROM COMMON_FILE 
+		 WHERE 1=1 
+	       AND DEL_YN='N'
+	       AND FILE_GROUP=#{fileGroup}
+	       AND PIDX=#{pidx}
+	       
+	       <choose>
+		       <when test="fileTypeArr != null">
+		       		AND FILE_TYPE in 
+		       		<foreach collection="fileTypeArr" item="item" separator="," open="(" close=")">
+						#{item}
+					</foreach>
+		       </when>
+		    
+		    	<when test="fileType != null">
+		    		AND FILE_TYPE = #{fileType}
+		    	</when>
+	    	</choose>
+	    	
+	    ORDER BY ORDER_NUM ASC, IDX DESC
+	    
+	</select>
+	
+</mapper>

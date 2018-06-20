@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+        
+<tiles-definitions>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="default_mobile" template="/WEB-INF/views/layouts/mobile/template.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layouts/mobile/header.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/views/layouts/mobile/footer.jsp" />
+	</definition>
+	
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="ajax_default_mobile" template="/WEB-INF/views/layouts/mobile/ajxtemplate.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="popup_default_mobile" template="/WEB-INF/views/layouts/mobile/popuptemplate.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+	
+	<definition name="mobile/*.ajx" extends="ajax_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}.jsp" />
+	</definition>
+	<definition name="mobile/*/*.ajx" extends="ajax_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/{2}.jsp" />
+	</definition>
+	<definition name="mobile/*/*/*.ajx" extends="ajax_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="mobile/*/popup/*" extends="popup_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/popup/{2}.jsp" />
+	</definition>
+	<definition name="mobile/*/popup/*/*" extends="popup_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/popup/{2}/{3}.jsp" />
+	</definition>
+	<definition name="mobile/*/popup/*/*/*" extends="popup_default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/popup/{2}/{3}/{4}.jsp" />
+	</definition>
+	
+	<definition name="mobile/*" extends="default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}.jsp" />
+	</definition>
+	<definition name="mobile/*/*" extends="default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/{2}.jsp" />
+	</definition>
+	<definition name="mobile/*/*/*" extends="default_mobile">
+		<put-attribute name="body" value="/WEB-INF/views/mobile/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	
+</tiles-definitions>

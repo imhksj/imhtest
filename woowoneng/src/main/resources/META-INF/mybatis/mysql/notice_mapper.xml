@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.NoticeDao">	
+	
+    <resultMap type="notice" id="noticeMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="title" column="TITLE" />
+		<result property="name" column="NAME" />
+		<result property="category" column="CATEGORY" />
+		<result property="content" column="CONTENT" />
+		<result property="noticeDate" column="NOTICE_DATE" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+		<result property="hit" column="HIT" />
+	</resultMap>
+
+	<resultMap type="commonFile" id="commonFileMap" extends="categoryMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <resultMap type="category" id="categoryMap">
+		<id property="categorys.idx" column="C_IDX" />
+	  	<result property="categorys.cName" column="C_C_NAME" />
+		<result property="categorys.cType" column="C_C_TYPE" />
+		<result property="categorys.topIdx" column="C_TOP_IDX" />
+		<result property="categorys.pidx" column="C_PIDX" />
+		<result property="categorys.depthNum" column="C_DEPTH_NUM" />
+		<result property="categorys.delYn" column="C_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+ 
+ 	<sql id="categoryColumn">
+		C.IDX AS C_IDX
+    	,C.C_NAME AS C_C_NAME
+    	,C.C_TYPE AS C_C_TYPE
+    	,C.TOP_IDX AS C_TOP_IDX
+    	,C.PIDX AS C_PIDX
+    	,C.DEPTH_NUM AS C_DEPTH_NUM
+    	,C.DEL_YN AS C_DEL_YN
+    </sql>
+ 
+	<!-- 공지사항 등록 -->
+	<insert id="insert" parameterType="notice">
+		INSERT 
+		  INTO NOTICE 
+		       (
+				 TITLE
+				,NAME
+				,CATEGORY
+				,CONTENT
+				,NOTICE_DATE
+				,REG_ADMIN_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{title}
+		         ,#{name}
+		         ,#{category}
+		         ,#{content}
+		         ,#{noticeDate}
+		         ,#{regAdminIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 공지사항 수정 -->
+	<update id="update" parameterType="notice">
+	
+		UPDATE NOTICE SET 
+		
+			   TITLE = #{title}
+		       ,NAME = #{name}
+		       ,CATEGORY = #{category}
+		       ,CONTENT = #{content}
+		       ,NOTICE_DATE = #{noticeDate}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+		       
+		 WHERE IDX = #{idx}
+	
+	</update>
+
+	<!-- 공지사항 조회 -->
+	<select id="select" parameterType="map" resultMap="noticeMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/>, <include refid="categoryColumn"/> FROM NOTICE A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='CUSTOMER/NOTICE' AND F.FILE_TYPE='FILE'
+	    LEFT JOIN CATEGORY C
+	    	ON A.CATEGORY = C.IDX
+	    WHERE A.DEL_YN = 'N'
+	    AND A.IDX = #{idx}
+	
+	</select>
+	
+	<!-- 공지사항 리스트 조회 -->
+	<select id="selectList" parameterType="map" resultMap="noticeMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/>, <include refid="categoryColumn"/> FROM NOTICE A 
+	    LEFT JOIN COMMON_FILE F
+	    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='CUSTOMER/NOTICE' AND F.FILE_TYPE='FILE'
+	    LEFT JOIN CATEGORY C
+	    	ON A.CATEGORY = C.IDX
+	    	
+	    WHERE A.DEL_YN = 'N'
+		
+		<if test="category != null and category != ''">
+			AND A.CATEGORY = #{category}
+		</if>
+		
+		ORDER BY A.IDX DESC
+			
+	</select>
+	
+	<!-- 공지사항 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM NOTICE
+		
+		WHERE DEL_YN = 'N'
+		
+		<if test="category != null and category != ''">
+			AND CATEGORY = #{category}
+		</if>
+			
+	</select>
+	
+	<!-- 공지사항 이전글 -->
+	<select id="selectPrev" parameterType="map" resultMap="noticeMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM NOTICE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM NOTICE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum,
+		                            (SELECT @RN:=0) AS R) D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) > t2.ROWNUM 
+		       AND DEL_YN = 'N' 
+		ORDER BY t2.ROWNUM DESC LIMIT 1
+	</select>
+	
+	<!-- 공지사항 다음글 -->
+	<select id="selectNext" parameterType="map" resultMap="noticeMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM NOTICE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE t2.ROWNUM > 
+		       (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM NOTICE WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		                            (SELECT @RN:=0) AS R 
+		                     )D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) 
+		       AND DEL_YN = 'N' limit 1
+	</select>
+	
+	<update id="updateHit">
+		UPDATE NOTICE SET HIT = (HIT+1)
+		WHERE IDX = ${idx}
+	</update>
+	
+	<!-- 공지사항 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE NOTICE SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+		
+</mapper>

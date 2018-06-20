@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+        
+<tiles-definitions>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="default" template="/WEB-INF/views/layouts/template.jsp">
+		<put-attribute name="top" value="/WEB-INF/views/layouts/top.jsp" />
+		<put-attribute name="nav" value="/WEB-INF/views/layouts/nav.jsp" />
+		<put-attribute name="lnb" value="/WEB-INF/views/layouts/lnb.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="common_layer_popup" value="/WEB-INF/views/layouts/common_layer_popup.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+	</definition>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="ajax_default" template="/WEB-INF/views/layouts/ajxtemplate.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+	
+	<definition name="*.ajx" extends="ajax_default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+	</definition>
+	<definition name="*/*.ajx" extends="ajax_default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+	<definition name="*/*/*.ajx" extends="ajax_default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="product/product_search_list" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/product/product_search_list.jsp" />
+	</definition>
+	<definition name="product/*" extends="default">
+		<put-attribute name="top" value="/WEB-INF/views/layouts/product_top.jsp" />
+		<put-attribute name="nav" value="/WEB-INF/views/layouts/product_nav.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/{1}.jsp" />
+	</definition>
+	<definition name="product/*/*" extends="default">
+		<put-attribute name="top" value="/WEB-INF/views/layouts/product_top.jsp" />
+		<put-attribute name="nav" value="/WEB-INF/views/layouts/product_nav.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/{1}/{2}.jsp" />
+	</definition>
+	<definition name="product/*/*/*" extends="default">
+		<put-attribute name="top" value="/WEB-INF/views/layouts/product_top.jsp" />
+		<put-attribute name="nav" value="/WEB-INF/views/layouts/product_nav.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/product/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	<definition name="*" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+	</definition>
+	<definition name="*/*" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+	<definition name="*/*/*" extends="default">
+		<put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+	</definition>
+		
+</tiles-definitions>

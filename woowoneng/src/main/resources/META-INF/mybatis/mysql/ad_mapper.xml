@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.woowoneng.dao.AdDao">	
+	
+    <resultMap type="ad" id="adMap" extends="commonFileMap">
+		<id property="idx" column="IDX" />
+	  	<result property="media" column="MEDIA" />
+		<result property="productionDate" column="PRODUCTION_DATE" />
+		<result property="note" column="NOTE" />
+		<result property="content" column="CONTENT" />
+		<result property="delYn" column="DEL_YN" />
+		<result property="regDate" column="REG_DATE" />
+		<result property="regAdminIdx" column="REG_ADMIN_IDX" />
+		<result property="modiDate" column="MODI_DATE" />
+		<result property="modiAdminIdx" column="MODI_ADMIN_IDX" />
+		<result property="delDate" column="DEL_DATE" />
+		<result property="delAdminIdx" column="DEL_ADMIN_IDX" />
+		<result property="hit" column="HIT" />
+	</resultMap>
+
+	<resultMap type="commonFile" id="commonFileMap">
+		<id property="commonFile.idx" column="F_IDX" />
+		<result property="commonFile.fileOrgName" column="F_FILE_ORG_NAME" />
+		<result property="commonFile.fileSysName" column="F_FILE_SYS_NAME" />
+		<result property="commonFile.fileGroup" column="F_FILE_GROUP" />
+		<result property="commonFile.fileType" column="F_FILE_TYPE" />
+		<result property="commonFile.pidx" column="F_PIDX" />
+		<result property="commonFile.delYn" column="F_DEL_YN" />
+	</resultMap>
+    
+    <sql id="commonFileColumn">
+		F.IDX AS F_IDX
+    	,F.FILE_ORG_NAME AS F_FILE_ORG_NAME
+    	,F.FILE_SYS_NAME AS F_FILE_SYS_NAME
+    	,F.FILE_GROUP AS F_FILE_GROUP
+    	,F.FILE_TYPE AS F_FILE_TYPE
+    	,F.PIDX AS F_PIDX
+    	,F.DEL_YN AS F_DEL_YN
+    </sql>
+ 
+	<!-- 광고홍보 등록 -->
+	<insert id="insert" parameterType="ad">
+		INSERT 
+		  INTO AD 
+		       (
+				 MEDIA
+				,PRODUCTION_DATE
+				,NOTE
+				,CONTENT
+				,REG_ADMIN_IDX
+		       ) 
+		       VALUES 
+		       (
+		         #{media}
+		         ,#{productionDate}
+		         ,#{note}
+		         ,#{content}
+		         ,#{regAdminIdx}
+		       )
+		<selectKey resultType="int" keyProperty="idx" order="AFTER">
+	        SELECT LAST_INSERT_ID() 
+	    </selectKey>
+	</insert>
+
+	<!-- 광고홍보 수정 -->
+	<update id="update" parameterType="ad">
+	
+		UPDATE AD SET 
+		
+			   MEDIA = #{media}
+		       ,PRODUCTION_DATE = #{productionDate}
+		       ,NOTE = #{note}
+		       ,CONTENT = #{content}
+		       ,MODI_DATE = NOW()
+		       ,MODI_ADMIN_IDX = #{modiAdminIdx}
+		       
+		 WHERE IDX = #{idx}
+	
+	</update>
+
+	<!-- 광고홍보 조회 -->
+	<select id="select" parameterType="map" resultMap="adMap">
+	
+		SELECT * FROM AD
+		
+		WHERE IDX = #{idx}
+		AND DEL_YN='N'
+	
+	</select>
+	
+	<!-- 광고홍보 리스트 -->
+	<select id="selectList" parameterType="map" resultMap="adMap">
+	
+		SELECT A.*, <include refid="commonFileColumn"/> FROM AD A
+			LEFT JOIN COMMON_FILE F
+		    	ON A.IDX=F.PIDX AND F.DEL_YN='N' AND F.FILE_GROUP='PR/AD' AND F.FILE_TYPE='LIST_IMG'
+		WHERE A.DEL_YN='N'
+		ORDER BY A.IDX DESC
+	
+	</select>
+	
+	<!-- 광고홍보 리스트 갯수 -->
+	<select id="count-selectList" parameterType="map" resultType="int">
+	    
+		SELECT COUNT(*) FROM AD 
+		WHERE DEL_YN = 'N'
+			
+	</select>
+	
+	<!-- 광고홍보 이전글 -->
+	<select id="selectPrev" parameterType="map" resultMap="adMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM AD WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM AD WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum,
+		                            (SELECT @RN:=0) AS R) D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) > t2.ROWNUM 
+		       AND DEL_YN = 'N' 
+		ORDER BY t2.ROWNUM DESC LIMIT 1
+	</select>
+	
+	<!-- 광고홍보 다음글 -->
+	<select id="selectNext" parameterType="map" resultMap="adMap" >
+		SELECT * 
+		  FROM 
+		       (SELECT @RN:=@RN+1 AS ROWNUM, 
+		              rnum.* 
+		         FROM 
+		              (SELECT * FROM AD WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		              (SELECT @RN:=0) AS R
+		       ) t2 
+		 WHERE t2.ROWNUM > 
+		       (SELECT ROWNUM 
+		         FROM 
+		              (SELECT * 
+		                FROM 
+		                     (SELECT @RN:=@RN+1 AS ROWNUM, 
+		                            rnum.* 
+		                       FROM 
+		                            (SELECT * FROM AD WHERE DEL_YN='N' ORDER BY IDX DESC) AS rnum, 
+		                            (SELECT @RN:=0) AS R 
+		                     )D 
+		              )F 
+		        WHERE F.IDX = #{idx}
+		       ) 
+		       AND DEL_YN = 'N' limit 1
+	</select>
+	
+	<update id="updateHit">
+		UPDATE AD SET HIT = (HIT+1)
+		WHERE IDX = ${idx}
+	</update>
+	
+	<!-- 광고홍보 삭제 -->
+	<update id="delete" parameterType="map">
+	
+		UPDATE AD SET
+		 
+			DEL_YN='Y'
+			,DEL_DATE = NOW()
+			,DEL_ADMIN_IDX = ${delAdminIdx}
+			 
+		WHERE IDX = ${idx}
+	
+	</update>
+		
+</mapper>

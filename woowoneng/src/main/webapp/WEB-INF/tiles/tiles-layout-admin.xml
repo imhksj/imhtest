@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+        
+<tiles-definitions>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+	<definition name="default_admin" template="/WEB-INF/views/layouts/admin/template.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layouts/admin/header.jsp" />
+		<put-attribute name="lnb" value="/WEB-INF/views/layouts/admin/lnb.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/views/layouts/admin/footer.jsp" />
+	</definition>
+
+	<!-- default : 템플릿에 설정된 페이지의 구성 요소에 대한 실제 파일을 지정합니다. -->
+
+	<definition name="login_default" template="/WEB-INF/views/layouts/admin/login_template.jsp">
+		<put-attribute name="body" value="" />
+	</definition>
+		
+	<definition name="admin/login" extends="login_default">
+		<put-attribute name="body" value="/WEB-INF/views/admin/login.jsp" />
+	</definition>
+	
+	<definition name="admin/*" extends="default_admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/{1}.jsp" />
+	</definition>
+	<definition name="admin/*/*" extends="default_admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/{1}/{2}.jsp" />
+	</definition>
+	<definition name="admin/*/*/*" extends="default_admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/{1}/{2}/{3}.jsp" />
+	</definition>
+	
+	
+</tiles-definitions>

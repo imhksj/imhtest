@@ -1,0 +1,15 @@
+
+@charset "utf-8"; 
+
+/* 클린사업 정부조달사업 */
+.busi_wrap	{margin:-15px -20px 0 -20px}
+.busi_wrap .img	{display:block; margin:0 auto; font-size:0; line-height:0}
+.busi_wrap .img img	{width:100%}
+
+
+
+
+@media screen and (max-width:818px){
+	
+
+}

@@ -1,0 +1,29 @@
+
+@charset "utf-8";
+
+/* login */
+#wrap #container	{min-height:0; background:#fff}
+#wrap #container .content	{width:100%; margin:0; padding:0}
+
+#wrap #header .header h1	{left:50%; margin-left:-108px}
+#wrap #header .header h1 a	{width:286px; height:21px; background:url('/admin/images/h1_logo_login.gif') no-repeat 0 0;}
+
+#wrap #footer .footer	{background:#fff}
+#wrap #footer .footer p	{color:#000}
+
+.login_wrap	{width:355px; margin:0 auto; padding-top:75px}
+.login_wrap dl	{overflow:hidden;}
+.login_wrap dl:after	{content:""; display:block; clear:both}
+.login_wrap dl dt	{float:left; margin-top:15px; width:105px; font-size:14px; font-weight:bold; line-height:40px; letter-spacing:-1px}
+.login_wrap dl dd	{float:left; margin-top:15px; width:250px; font-size:14px; font-weight:bold; line-height:40px}
+.login_wrap dl dd input	{padding:4px 10px; height:30px; border:1px solid #32343d; line-height:34px; vertical-align:top}
+.login_wrap dl dd input:focus	{}
+
+.login_wrap .btn_wrap	{text-align:right}
+.login_wrap .btn_login	{display:inline-block; width:250px; height:45px; border:1px solid #32343d; background:#fdb913; color:#000; font-size:16px; font-weight:bold; line-height:45px}
+.login_wrap .btn_login:hover	{}
+
+.login_wrap .t_info	{margin-top:24px; color:#999; font-size:12px; line-height:26px; text-align:center}
+.login_wrap .t_info .chk	{display:inline-block; width:14px; height:14px; margin-right:5px; vertical-align:middle}
+.login_wrap .t_info .chk input	{vertical-align:top}
+.login_wrap .t_info label	{vertical-align:middle}
